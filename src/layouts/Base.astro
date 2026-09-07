@@ -1,0 +1,49 @@
+---
+// The one page skeleton: head, skip link, header with name and nav, main, footer.
+import { SITE, NAV, url } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const path = Astro.url.pathname; // includes the base path
+const isHome = path === url('/');
+const canonical = new URL(path, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{isHome ? SITE.name : `${title} | ${SITE.name}`}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:type" content="website">
+<meta property="og:url" content={canonical}>
+<link rel="alternate" type="application/rss+xml" title={SITE.name} href={url('/feed.xml')}>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href={url('/style.css')}>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header>
+  {isHome
+    ? <h1 class="name">{SITE.name}</h1>
+    : <p><a class="name" href={url('/')} rel="home">{SITE.name}</a></p>}
+  <nav aria-label="Primary"><ul>
+    {NAV.map((item) => (
+      <li>{path === url(item.href)
+        ? <span aria-current="page">{item.label}</span>
+        : <a href={url(item.href)}>{item.label}</a>}</li>
+    ))}
+  </ul></nav>
+</header>
+<main id="main">
+  <slot />
+</main>
+<footer><p><a rel="me" href={SITE.github}>github</a> · <a href={url('/feed.xml')}>rss</a></p></footer>
+</body>
+</html>
