@@ -1,0 +1,19 @@
+---
+// Dated pages from the "pages" collection: /reading/ and /routine/.
+import Base from '../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { fmtDate } from '../lib/site';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((entry) => ({ params: { page: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<Base title={entry.data.title} description={entry.data.description}>
+  <h1>{entry.data.title}</h1>
+  <p class="meta">Updated <time datetime={fmtDate(entry.data.updated)}>{fmtDate(entry.data.updated)}</time></p>
+  <Content />
+</Base>

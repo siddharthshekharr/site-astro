@@ -1,0 +1,19 @@
+---
+// Home: bio, contact line, and the full post list (this is the blog index).
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { SITE, url, fmtDate } from '../lib/site';
+
+const posts = (await getCollection('blog', (e) => !e.data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<Base title={SITE.name} description={SITE.description}>
+  <p>Not written yet.</p>
+  <p><a rel="me" href={SITE.github}>github</a></p>
+  <h2 id="posts">Posts</h2>
+  <ul class="posts">
+    {posts.map((p) => (
+      <li><time datetime={fmtDate(p.data.date)}>{fmtDate(p.data.date)}</time><a href={url(`/blog/${p.id}/`)}>{p.data.title}</a></li>
+    ))}
+  </ul>
+</Base>
